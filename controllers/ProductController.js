@@ -79,7 +79,7 @@ export const edit = async (req, res) => {
             console.log(products);
         }
     } catch (err) {
-        // console.log(err);
+        console.log(err);
     }
 };
 
