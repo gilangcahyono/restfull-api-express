@@ -63,7 +63,6 @@ export const edit = async (req, res) => {
             price: data.price,
             stock: data.stock,
             category: data.category,
-            updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
         });
         if (products.rowCount > 0) {
             res.json(200, {
@@ -74,7 +73,6 @@ export const edit = async (req, res) => {
                     price: data.price,
                     stock: data.stock,
                     category: data.category,
-                    updated_at: moment().format('YYYY-MM-DD HH:mm:ss'),
                 },
             });
         } else {
