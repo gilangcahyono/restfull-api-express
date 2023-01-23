@@ -30,7 +30,7 @@ export class Model {
                         price = ${data.price},
                         stock = ${data.stock},
                         category = '${data.category}',
-                        updated_at = '${moment().format('YYYY-MM-DD HH:mm:ss')}'
+                        updated_at = '${data.updated_at}'
                     WHERE 
                         id = ${data.id}`;
 
