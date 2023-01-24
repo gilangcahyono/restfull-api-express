@@ -1,13 +1,39 @@
-import { Product } from '../models/ObjectModel.js';
+import db from './db.config.js';
+import moment from 'moment';
 
 export const show = async (req, res) => {
     try {
-        const products = await Product.select();
-        if (products.length > 0) {
+        const sql = 'SELECT * FROM products';
+        const products = await db.query(sql);
+
+        if (products.rows.length > 0) {
             res.json(200, {
                 success: true,
-                data: products,
+                data: products.rows,
             });
+        } else {
+            res.json(404, {
+                success: false,
+                message: 'Data tidak ditemukan!',
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        res.json(500, {
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
+
+export const showOne = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const sql = `SELECT * FROM products WHERE id = ${id}`;
+        const products = await db.query(sql);
+
+        if (products.rows.length > 0) {
+            res.json(200, products.rows[0]);
         } else {
             res.json(404, {
                 success: false,
@@ -26,16 +52,55 @@ export const show = async (req, res) => {
 export const add = async (req, res) => {
     try {
         const data = req.body;
-        const products = await Product.insert({
-            name: data.name,
-            price: data.price,
-            stock: data.stock,
-            category: data.category,
-        });
+        const sql = `INSERT INTO products
+            (name, price, stock, category) 
+        VALUES 
+            ('${data.name}', ${data.price}, ${data.stock}, '${data.category}')`;
+        const products = await db.query(sql);
+
+        console.log(products);
         if (products.rowCount > 0) {
             res.json(200, {
                 success: true,
                 message: 'Data berhasil ditambahkan!',
+                data: {
+                    name: data.name,
+                    price: data.price,
+                    stock: data.stock,
+                    category: data.category,
+                },
+            });
+        }
+    } catch (err) {
+        if (err.code == 23505) {
+            res.json(400, {
+                success: false,
+                message: 'Data duplikat!, tambah data gagal',
+            });
+        }
+        console.log(err);
+    }
+};
+
+export const edit = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+        const sql = `UPDATE products 
+        SET
+            name = '${data.name}',
+            price = ${data.price},
+            stock = ${data.stock},
+            category = '${data.category}',
+            updated_at = '${moment().format('YYYY-MM-DD HH:mm:ss')}'
+        WHERE 
+            id = ${id}`;
+        const products = await db.query(sql);
+
+        if (products.rowCount > 0) {
+            res.json(200, {
+                success: true,
+                message: 'Data berhasil diubah!',
                 data: {
                     name: data.name,
                     price: data.price,
@@ -53,40 +118,12 @@ export const add = async (req, res) => {
     }
 };
 
-export const edit = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const data = req.body;
-        const products = await Product.update({
-            id: id,
-            name: data.name,
-            price: data.price,
-            stock: data.stock,
-            category: data.category,
-        });
-        if (products.rowCount > 0) {
-            res.json(200, {
-                success: true,
-                message: 'Data berhasil diubah!',
-                data: {
-                    name: data.name,
-                    price: data.price,
-                    stock: data.stock,
-                    category: data.category,
-                },
-            });
-        } else {
-            console.log(products);
-        }
-    } catch (err) {
-        console.log(err);
-    }
-};
-
 export const remove = async (req, res) => {
     try {
         const { id } = req.params;
-        const products = await Product.delete(id);
+        const sql = `DELETE FROM products WHERE id = ${id}`;
+        const products = await db.query(sql);
+
         if (products.rowCount > 0) {
             res.json(200, {
                 success: true,
