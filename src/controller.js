@@ -7,19 +7,19 @@ export const show = async (req, res) => {
         const products = await db.query(sql);
 
         if (products.rows.length > 0) {
-            res.json(200, {
+            return res.json(200, {
                 success: true,
                 data: products.rows,
             });
         } else {
-            res.json(404, {
+            return res.json(404, {
                 success: false,
                 message: 'Data tidak ditemukan!',
             });
         }
     } catch (err) {
         console.log(err);
-        res.json(500, {
+        return res.json(500, {
             success: false,
             message: 'Internal server error',
         });
@@ -33,16 +33,16 @@ export const showOne = async (req, res) => {
         const products = await db.query(sql);
 
         if (products.rows.length > 0) {
-            res.json(200, products.rows[0]);
+            return res.json(200, products.rows[0]);
         } else {
-            res.json(404, {
+            return res.json(404, {
                 success: false,
                 message: 'Data tidak ditemukan!',
             });
         }
     } catch (err) {
         console.log(err);
-        res.json(500, {
+        return res.json(500, {
             success: false,
             message: 'Internal server error',
         });
@@ -60,7 +60,7 @@ export const add = async (req, res) => {
 
         console.log(products);
         if (products.rowCount > 0) {
-            res.json(200, {
+            return res.json(200, {
                 success: true,
                 message: 'Data berhasil ditambahkan!',
                 data: {
@@ -73,7 +73,7 @@ export const add = async (req, res) => {
         }
     } catch (err) {
         if (err.code == 23505) {
-            res.json(400, {
+            return res.json(400, {
                 success: false,
                 message: 'Data duplikat!, tambah data gagal',
             });
@@ -98,7 +98,7 @@ export const edit = async (req, res) => {
         const products = await db.query(sql);
 
         if (products.rowCount > 0) {
-            res.json(200, {
+            return res.json(200, {
                 success: true,
                 message: 'Data berhasil diubah!',
                 data: {
@@ -111,7 +111,7 @@ export const edit = async (req, res) => {
         }
     } catch (err) {
         console.log(err);
-        res.json(500, {
+        return res.json(500, {
             success: false,
             message: 'Internal server error',
         });
@@ -125,19 +125,19 @@ export const remove = async (req, res) => {
         const products = await db.query(sql);
 
         if (products.rowCount > 0) {
-            res.json(200, {
+            return res.json(200, {
                 success: true,
                 message: 'Data berhasil dihapus!',
             });
         } else {
-            res.json(404, {
+            return res.json(404, {
                 success: false,
                 message: 'Gagal menghapus, Data tidak ditemukan!',
             });
         }
     } catch (err) {
         console.log(err);
-        res.json(500, {
+        return res.json(500, {
             success: false,
             message: 'Internal server error',
         });
